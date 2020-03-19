@@ -44,7 +44,7 @@ public class CRDExample {
   private static final Logger logger = LoggerFactory.getLogger(CRDExample.class);
 
   public static String DUMMY_CRD_GROUP = "demo.fabric8.io";
-  public static String DUMMY_CRD_NAME = "dummies." +  DUMMY_CRD_GROUP;
+  public static String DUMMY_CRD_NAME = "dum-mies." +  DUMMY_CRD_GROUP;
 
   private static boolean logRootPaths = false;
 
@@ -122,7 +122,7 @@ public class CRDExample {
             withApiVersion("apiextensions.k8s.io/v1beta1").
             withNewMetadata().withName(DUMMY_CRD_NAME).endMetadata().
             withNewSpec().withGroup(DUMMY_CRD_GROUP).withVersion("v1").withScope(resourceScope(resourceNamespaced)).
-              withNewNames().withKind("Dummy").withShortNames("dummy").withPlural("dummies").endNames().endSpec().
+              withNewNames().withKind("Dummy").withShortNames("dum-my").withPlural("dum-mies").endNames().endSpec().
             build();
 
         client.customResourceDefinitions().create(dummyCRD);
@@ -130,7 +130,6 @@ public class CRDExample {
       }
 
       KubernetesDeserializer.registerCustomKind(DUMMY_CRD_GROUP + "/v1", "Dummy", Dummy.class);
-
       // lets create a client for the CRD
       NonNamespaceOperation<Dummy, DummyList, DoneableDummy, Resource<Dummy, DoneableDummy>> dummyClient = client.customResources(dummyCRD, Dummy.class, DummyList.class, DoneableDummy.class);
       if (resourceNamespaced) {
@@ -138,11 +137,10 @@ public class CRDExample {
       }
       CustomResourceList<Dummy> dummyList = dummyClient.list();
       List<Dummy> items = dummyList.getItems();
-      System.out.println("  found " + items.size() + " dummies");
+      System.out.println("  found " + items.size() + " dum-mies");
       for (Dummy item : items) {
         System.out.println("    " + item);
       }
-
       Dummy dummy = new Dummy();
       ObjectMeta metadata = new ObjectMeta();
       metadata.setName("foo");
@@ -177,7 +175,6 @@ public class CRDExample {
       });
 
       System.in.read();
-      
     } catch (KubernetesClientException e) {
       logger.error(e.getMessage(), e);
     } catch (Exception e) {

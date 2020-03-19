@@ -85,7 +85,4 @@ public class KubernetesMockServer extends DefaultMockServer {
                 .build();
         return new DefaultKubernetesClient(createHttpClientForMockServer(config), config);
     }
-
-
-
 }

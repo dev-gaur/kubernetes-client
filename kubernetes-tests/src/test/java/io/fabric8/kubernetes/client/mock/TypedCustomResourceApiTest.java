@@ -27,9 +27,9 @@ import io.fabric8.kubernetes.client.mock.crd.PodSetSpec;
 import io.fabric8.kubernetes.client.mock.crd.PodSetStatus;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class TypedCustomResourceApiTest {
 
   private CustomResourceDefinition podSetCrd;
 
-  @Before
+  @BeforeEach
   public void setupCrd() {
     podSetCrd = new CustomResourceDefinitionBuilder()
       .withNewMetadata().withName("podsets.demo.k8s.io").endMetadata()

@@ -23,10 +23,10 @@ import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinitionLis
 import io.fabric8.kubernetes.api.model.apiextensions.JSONSchemaProps;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URL;
@@ -43,7 +43,7 @@ public class CustomResourceDefinitionTest {
 
   private CustomResourceDefinition customResourceDefinition;
 
-  @Before
+  @BeforeEach
   public void setupCrd() throws IOException {
     customResourceDefinition = new CustomResourceDefinitionBuilder()
       .withApiVersion("apiextensions.k8s.io/v1beta1")
@@ -87,7 +87,9 @@ public class CustomResourceDefinitionTest {
   public void testCreate() {
     server.expect().post().withPath("/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions").andReturn(200, customResourceDefinition).once();
     KubernetesClient client = server.getClient();
-
+    System.out.println("PRINTING CRD!!!!!!...............");
+    System.out.println(customResourceDefinition);
+    System.out.println("END");
     CustomResourceDefinition crd = client.customResourceDefinitions().createOrReplace(customResourceDefinition);
     assertNotNull(crd);
     assertEquals("sparkclusters.radanalytics.io", crd.getMetadata().getName());

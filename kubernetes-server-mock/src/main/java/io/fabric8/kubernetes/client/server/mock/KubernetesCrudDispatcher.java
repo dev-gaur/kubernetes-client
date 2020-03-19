@@ -52,26 +52,50 @@ public class KubernetesCrudDispatcher extends CrudDispatcher {
   public MockResponse handleGet(String path) {
     MockResponse response = new MockResponse();
     List<String> items = new ArrayList<>();
-    AttributeSet query = attributeExtractor.extract(path);
+    AttributeSet query = attributeExtractor.fromPath(path);
+
+    System.out.println("Query string: '" + path + "'");
+    System.out.println("Query attributes: '" + query + "'");
 
     for (Map.Entry<AttributeSet, String> entry : map.entrySet()) {
+      System.err.println("Comparing attributes: '" + entry.getKey() + "'");
+
       if (entry.getKey().matches(query)) {
-        LOGGER.debug("Entry found for query {} : {}", query, entry);
+        LOGGER.info("Entry found for query {} : {}", query, entry);
+        System.out.println("Entry found for query " + query + " : " + entry);
+
         items.add(entry.getValue());
       }
     }
 
     if (query.containsKey(KubernetesAttributesExtractor.NAME)) {
       if (!items.isEmpty()) {
+        System.out.println("Return single: " + items.get(0));
         response.setBody(items.get(0));
         response.setResponseCode(200);
       } else {
+        System.out.println("Not found");
         response.setResponseCode(404);
       }
     } else {
+      System.out.println("Return list: " + items.size());
       response.setBody(responseComposer.compose(items));
       response.setResponseCode(200);
     }
+    return response;
+  }
+
+
+  public MockResponse handleCreate(String path, String s) {
+    MockResponse response = new MockResponse();
+    System.out.println("INSIDE POST:");
+    System.out.println(attributeExtractor.fromPath(path));
+    System.out.println(attributeExtractor.fromResource(s));
+    AttributeSet features = AttributeSet.merge(attributeExtractor.fromPath(path), attributeExtractor.fromResource(s));
+    System.out.println(features);
+    map.put(features, s);
+    response.setBody(s);
+    response.setResponseCode(202);
     return response;
   }
 
