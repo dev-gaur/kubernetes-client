@@ -29,6 +29,7 @@ import io.fabric8.mockwebserver.ServerResponse;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockWebServer;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -60,23 +61,21 @@ public class KubernetesMockServer extends DefaultMockServer {
     super(context, server, responses, dispatcher, useHttps);
   }
 
-  public void init() {
-        start();
-    }
-
-    public void destroy() {
+  public void init() { start(); }
+  public void init(int port) { start(port); }
+  public void destroy() {
         shutdown();
     }
 
-    public void onStart() {
-       expect().get().withPath("/").andReturn(200, new RootPathsBuilder().addToPaths(getRootPaths()).build()).always();
-    }
+  public void onStart() {
+      expect().get().withPath("/").andReturn(200, new RootPathsBuilder().addToPaths(getRootPaths()).build()).always();
+  }
 
-    public String[] getRootPaths() {
+  public String[] getRootPaths() {
         return new String[]{"/api", "/apis/extensions"};
     }
 
-    public NamespacedKubernetesClient createClient() {
+  public NamespacedKubernetesClient createClient() {
         Config config = new ConfigBuilder()
                 .withMasterUrl(url("/"))
                 .withTrustCerts(true)
@@ -84,8 +83,6 @@ public class KubernetesMockServer extends DefaultMockServer {
                 .withNamespace("test")
                 .build();
         return new DefaultKubernetesClient(createHttpClientForMockServer(config), config);
-    }
-
-
+  }
 
 }

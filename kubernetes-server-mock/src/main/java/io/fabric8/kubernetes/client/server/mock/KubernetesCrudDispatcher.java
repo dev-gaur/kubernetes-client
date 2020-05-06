@@ -58,6 +58,7 @@ public class KubernetesCrudDispatcher extends CrudDispatcher {
 
   @Override
   public MockResponse dispatch(RecordedRequest request) {
+    System.out.println("Received a request..");
     String path = request.getPath();
     String method = request.getMethod();
     switch (method.toUpperCase()) {

@@ -37,6 +37,7 @@ public class KubernetesServer extends ExternalResource {
   // kubernetes resources using an in memory map and will appear as a real api
   // server.
   private boolean crudMode;
+  private boolean listenmode = false;
 
   public KubernetesServer() {
     this(true, false);
@@ -51,6 +52,12 @@ public class KubernetesServer extends ExternalResource {
     this.crudMode = crudMode;
   }
 
+  public KubernetesServer(boolean https, boolean crudMode, boolean listenMode) {
+    this.https = https;
+    this.crudMode = crudMode;
+    this.listenmode = listenMode;
+  }
+
   public void before() {
     mock = crudMode
       ? new KubernetesMockServer(new Context(), new MockWebServer(), new HashMap<ServerRequest, Queue<ServerResponse>>(), new KubernetesCrudDispatcher(), true)
@@ -59,6 +66,19 @@ public class KubernetesServer extends ExternalResource {
     client = mock.createClient();
   }
 
+  public void init(int port) {
+    if (listenmode) {
+      if (mock == null)
+        mock = new KubernetesMockServer(new Context(), new MockWebServer(), new HashMap<ServerRequest, Queue<ServerResponse>>(), new KubernetesCrudDispatcher(), true);
+      mock.init(port);
+    } else {
+      mock.init();
+    }
+  }
+
+  public void shutdown() {
+    mock.destroy();
+  }
   public void after() {
     mock.destroy();
     client.close();
